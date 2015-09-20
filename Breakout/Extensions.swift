@@ -1,6 +1,6 @@
 //
 //  Extensions.swift
-//  HelloWorld
+//  Breakout
 //
 //  Created by Harlan Haskins on 9/19/15.
 //  Copyright © 2015 Harlan Haskins. All rights reserved.

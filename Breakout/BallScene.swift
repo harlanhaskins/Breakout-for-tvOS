@@ -1,6 +1,6 @@
 //
 //  BallScene.swift
-//  HelloWorld
+//  Breakout
 //
 //  Created by Harlan Haskins on 9/18/15.
 //  Copyright © 2015 Harlan Haskins. All rights reserved.
@@ -22,6 +22,7 @@ struct CategoryMask: OptionSetType {
 class BallScene: SKScene, SKPhysicsContactDelegate {
     let ball = BallNode(width: 24.0)
     let paddle = PaddleNode(size: CGSize(width: 200.0, height: 25.0))
+    var activeBricks = [BrickNode]()
     var deathZone: DeathZoneNode!
     var ballIsActive = false
     
@@ -39,10 +40,18 @@ class BallScene: SKScene, SKPhysicsContactDelegate {
         deathZone.position = CGPoint(x: size.width / 2.0, y: deathZone.size.height / 2.0)
         physicsWorld.contactDelegate = self
         addBall()
-        createBricks()
+        resetBricks()
+    }
+    
+    func resetBricks() {
+        activeBricks = createBricks()
+        for brick in activeBricks {
+            addChild(brick)
+        }
     }
     
     func addBall() {
+        ball.removeFromParent()
         addChild(ball)
         ball.position = CGPoint(x: paddle.calculateAccumulatedFrame().midX - ball.calculateAccumulatedFrame().width / 2.0, y: paddle.calculateAccumulatedFrame().maxY)
         let joint = SKPhysicsJointFixed.jointWithBodyA(ball.physicsBody!, bodyB: paddle.physicsBody!, anchor: ball.position)
@@ -50,7 +59,7 @@ class BallScene: SKScene, SKPhysicsContactDelegate {
         ballIsActive = false
     }
     
-    func createBricks() {
+    func createBricks() -> [BrickNode] {
         let numberPerLine = 7
         let lines = 5
         let spacing: CGFloat = 25.0
@@ -58,26 +67,41 @@ class BallScene: SKScene, SKPhysicsContactDelegate {
         let height: CGFloat = 45.0
         let startX = spacing + width / 2.0
         let startY = size.height - spacing - height / 2.0
+        var bricks = [BrickNode]()
         for row in 0..<lines {
             for column in 0..<numberPerLine {
                 let x = startX + (spacing + width) * CGFloat(column)
                 let y = startY - (spacing + height) * CGFloat(row)
                 let brick = BrickNode(size: CGSize(width: width, height: height))
                 brick.position = CGPoint(x: x, y: y)
-                addChild(brick)
+                bricks.append(brick)
             }
         }
+        return bricks
     }
     
     func didBeginContact(contact: SKPhysicsContact) {
         guard let nodeA = contact.bodyA.node, nodeB = contact.bodyB.node else { return }
         guard let ball = (nodeA as? BallNode ?? nodeB as? BallNode) else { return }
+        if let paddle = (nodeA as? PaddleNode ?? nodeB as? PaddleNode) {
+            let point = convertPoint(ball.position, toNode: paddle)
+            let dX = point.x / (paddle.size.width / 2.0)
+            ball.physicsBody?.applyImpulse(CGVector(dx: dX, dy: 0))
+        }
         if let _ = (nodeA as? DeathZoneNode ?? nodeB as? DeathZoneNode) {
-            self.removeChildrenInArray([ball])
             addBall()
         }
         if let brick = (nodeA as? BrickNode ?? nodeB as? BrickNode) {
-            self.removeChildrenInArray([brick])
+            let action = SKAction.fadeOutWithDuration(0.1)
+            let remove = SKAction.removeFromParent()
+            brick.runAction(SKAction.sequence([action, remove]))
+            if let index = activeBricks.indexOf(brick) {
+                activeBricks.removeAtIndex(index)
+            }
+            if activeBricks.isEmpty {
+                addBall()
+                resetBricks()
+            }
         }
     }
 
@@ -88,7 +112,7 @@ class BallScene: SKScene, SKPhysicsContactDelegate {
     func didPress(recognizer: UIGestureRecognizer) {
         guard !ballIsActive else { return }
         physicsWorld.removeAllJoints()
-        let vector = CGVector(dx: CGFloat(random(-5, end: 5)), dy: CGFloat(random(-15, end: -10)))
+        let vector = CGVector(dx: CGFloat(random(-5, end: 5)), dy: CGFloat(random(-30, end: -20)))
         ball.physicsBody?.applyImpulse(vector)
         ballIsActive = true
     }

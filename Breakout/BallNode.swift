@@ -1,6 +1,6 @@
 //
 //  BallNode.swift
-//  HelloWorld
+//  Breakout
 //
 //  Created by Harlan Haskins on 9/19/15.
 //  Copyright © 2015 Harlan Haskins. All rights reserved.
@@ -21,7 +21,7 @@ class BallNode: SKShapeNode {
         physicsBody.linearDamping = 0.0
         physicsBody.categoryBitMask = CategoryMask.Ball.rawValue
         physicsBody.collisionBitMask = ([.World, .Paddle, .Brick, .DeathZone] as CategoryMask).rawValue
-        physicsBody.contactTestBitMask = ([.DeathZone, .Brick] as CategoryMask).rawValue
+        physicsBody.contactTestBitMask = ([.DeathZone, .Brick, .Paddle] as CategoryMask).rawValue
         self.physicsBody = physicsBody
     }
 

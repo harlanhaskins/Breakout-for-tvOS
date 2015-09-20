@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/harlan/Documents/Code/Apple/iOS/Personal/HelloWorld/Breakout.xcodeproj">
+      location = "self:Breakout.xcodeproj">
    </FileRef>
 </Workspace>

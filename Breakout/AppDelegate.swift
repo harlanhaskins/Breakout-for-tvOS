@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  HelloWorld
+//  Breakout
 //
 //  Created by Harlan Haskins on 9/18/15.
 //  Copyright © 2015 Harlan Haskins. All rights reserved.

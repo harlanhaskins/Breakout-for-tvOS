@@ -1,15 +1,15 @@
 //
-//  HelloWorldTests.swift
-//  HelloWorldTests
+//  BreakoutTests.swift
+//  BreakoutTests
 //
 //  Created by Harlan Haskins on 9/18/15.
 //  Copyright © 2015 Harlan Haskins. All rights reserved.
 //
 
 import XCTest
-@testable import HelloWorld
+@testable import Breakout
 
-class HelloWorldTests: XCTestCase {
+class BreakoutTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
